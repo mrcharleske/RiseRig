@@ -553,13 +553,21 @@
 
     <!-- Dashboard -->
     <div id="dashboard" class="hidden">
-        <div class="flex h-screen bg-gray-100">
+        <div class="flex flex-col lg:flex-row min-h-screen bg-gray-100">
+            <!-- Mobile Header -->
+            <div class="lg:hidden bg-white shadow-lg p-4 flex justify-between items-center">
+                <h2 class="text-xl font-bold text-gold">Riserig Dashboard</h2>
+                <button id="mobile-dashboard-menu" class="text-gray-700 hover:text-gold">
+                    <i class="fas fa-bars text-xl"></i>
+                </button>
+            </div>
+
             <!-- Sidebar -->
-            <div class="w-64 bg-white shadow-lg">
-                <div class="p-6">
+            <div id="dashboard-sidebar" class="w-full lg:w-64 bg-white shadow-lg lg:block hidden">
+                <div class="p-6 hidden lg:block">
                     <h2 class="text-xl font-bold text-gold">Riserig Dashboard</h2>
                 </div>
-                <nav class="mt-6">
+                <nav class="mt-0 lg:mt-6">
                     <a href="#" onclick="showDashboardSection('profile')" class="dashboard-nav-item block px-6 py-3 text-gray-700 hover:bg-yellow-50 hover:text-gold">
                         <i class="fas fa-user mr-3"></i> Profile
                     </a>
@@ -580,7 +588,7 @@
 
             <!-- Main Content -->
             <div class="flex-1 overflow-auto">
-                <div class="p-8">
+                <div class="p-4 lg:p-8">
                     <!-- Profile Section -->
                     <div id="dashboard-profile" class="dashboard-section">
                         <h2 class="text-2xl font-bold mb-6 text-gray-800">Profile Information</h2>
@@ -594,16 +602,21 @@
                                     <p class="text-gray-600" id="user-email">student@example.com</p>
                                 </div>
                             </div>
-                            <div class="grid md:grid-cols-2 gap-6">
-                                <div>
-                                    <label class="block text-sm font-medium text-gray-700 mb-2">Full Name</label>
-                                    <input type="text" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gold" placeholder="Enter your full name">
+                            <form id="profile-form">
+                                <div class="grid md:grid-cols-2 gap-6 mb-6">
+                                    <div>
+                                        <label for="full-name" class="block text-sm font-medium text-gray-700 mb-2">Full Name</label>
+                                        <input type="text" id="full-name" name="fullName" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gold" placeholder="Enter your full name">
+                                    </div>
+                                    <div>
+                                        <label for="phone-number" class="block text-sm font-medium text-gray-700 mb-2">Phone Number</label>
+                                        <input type="tel" id="phone-number" name="phoneNumber" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gold" placeholder="Enter your phone number">
+                                    </div>
                                 </div>
-                                <div>
-                                    <label class="block text-sm font-medium text-gray-700 mb-2">Phone Number</label>
-                                    <input type="tel" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gold" placeholder="Enter your phone number">
-                                </div>
-                            </div>
+                                <button type="submit" class="gold-gradient text-white px-6 py-3 rounded-lg hover:bg-gold-dark transition duration-300">
+                                    <i class="fas fa-save mr-2"></i> Save Profile
+                                </button>
+                            </form>
                         </div>
                     </div>
 
@@ -886,6 +899,12 @@
             if (activeNavItem) {
                 activeNavItem.classList.add('bg-yellow-50', 'text-gold');
             }
+            
+            // Hide mobile menu after selection
+            const sidebar = document.getElementById('dashboard-sidebar');
+            if (window.innerWidth < 1024) {
+                sidebar.classList.add('hidden');
+            }
         }
 
         function logout() {
@@ -1108,6 +1127,55 @@
             setTimeout(() => successDiv.remove(), 5000);
         });
 
+        // Profile form submission
+        document.addEventListener('DOMContentLoaded', () => {
+            const profileForm = document.getElementById('profile-form');
+            if (profileForm) {
+                profileForm.addEventListener('submit', (e) => {
+                    e.preventDefault();
+                    
+                    const formData = new FormData(e.target);
+                    const fullName = formData.get('fullName');
+                    const phoneNumber = formData.get('phoneNumber');
+                    
+                    // Save to localStorage for demo purposes
+                    localStorage.setItem('userProfile', JSON.stringify({
+                        fullName,
+                        phoneNumber,
+                        email: currentUser?.email || document.getElementById('user-email').textContent
+                    }));
+                    
+                    // Create success message
+                    const successDiv = document.createElement('div');
+                    successDiv.className = 'bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded mt-4';
+                    successDiv.innerHTML = `
+                        <div class="flex items-center">
+                            <i class="fas fa-check-circle mr-2"></i>
+                            <span>Profile saved successfully!</span>
+                        </div>
+                    `;
+                    
+                    // Add success message
+                    e.target.appendChild(successDiv);
+                    
+                    // Remove success message after 3 seconds
+                    setTimeout(() => successDiv.remove(), 3000);
+                });
+            }
+        });
+
+        // Mobile dashboard menu toggle
+        document.addEventListener('DOMContentLoaded', () => {
+            const mobileDashboardMenu = document.getElementById('mobile-dashboard-menu');
+            const dashboardSidebar = document.getElementById('dashboard-sidebar');
+            
+            if (mobileDashboardMenu && dashboardSidebar) {
+                mobileDashboardMenu.addEventListener('click', () => {
+                    dashboardSidebar.classList.toggle('hidden');
+                });
+            }
+        });
+
         // Firebase Auth State Observer
         if (window.onAuthStateChanged && window.firebaseAuth) {
             window.onAuthStateChanged(window.firebaseAuth, (user) => {
@@ -1173,5 +1241,5 @@
         // Initialize
         updateAuthButton();
     </script>
-<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9913a42ff4dc8a67',t:'MTc2MDkxMjIwMi4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9913bbdc41d88a67',t:'MTc2MDkxMzE3Mi4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
