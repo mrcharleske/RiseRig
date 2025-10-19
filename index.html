@@ -926,6 +926,10 @@
             const email = document.getElementById('auth-email').value;
             const password = document.getElementById('auth-password').value;
             
+            // Remove existing error messages
+            const existingError = document.querySelector('.bg-red-100');
+            if (existingError) existingError.remove();
+            
             try {
                 if (window.firebaseAuth) {
                     if (isLoginMode) {
@@ -942,20 +946,68 @@
                     showDashboard();
                 }
             } catch (error) {
-                // Create inline error message instead of alert
+                let errorMessage = '';
+                
+                // Handle specific Firebase auth errors with user-friendly messages
+                switch (error.code) {
+                    case 'auth/email-already-in-use':
+                        errorMessage = 'This email is already registered. Try logging in instead or use a different email.';
+                        break;
+                    case 'auth/weak-password':
+                        errorMessage = 'Password should be at least 6 characters long.';
+                        break;
+                    case 'auth/invalid-email':
+                        errorMessage = 'Please enter a valid email address.';
+                        break;
+                    case 'auth/user-not-found':
+                        errorMessage = 'No account found with this email. Please sign up first.';
+                        break;
+                    case 'auth/wrong-password':
+                        errorMessage = 'Incorrect password. Please try again.';
+                        break;
+                    case 'auth/too-many-requests':
+                        errorMessage = 'Too many failed attempts. Please try again later.';
+                        break;
+                    case 'auth/network-request-failed':
+                        errorMessage = 'Network error. Please check your internet connection.';
+                        break;
+                    default:
+                        errorMessage = error.message || 'Authentication failed. Please try again.';
+                }
+                
+                // Create inline error message
                 const errorDiv = document.createElement('div');
                 errorDiv.className = 'bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mt-4';
-                errorDiv.textContent = 'Authentication failed: ' + error.message;
+                errorDiv.innerHTML = `
+                    <div class="flex items-center">
+                        <i class="fas fa-exclamation-triangle mr-2"></i>
+                        <span>${errorMessage}</span>
+                    </div>
+                `;
                 
-                // Remove existing error messages
-                const existingError = document.querySelector('.bg-red-100');
-                if (existingError) existingError.remove();
-                
-                // Add new error message
+                // Add error message to form
                 document.getElementById('auth-form').appendChild(errorDiv);
                 
-                // Remove error after 5 seconds
-                setTimeout(() => errorDiv.remove(), 5000);
+                // If email already exists, suggest switching to login
+                if (error.code === 'auth/email-already-in-use' && !isLoginMode) {
+                    const switchDiv = document.createElement('div');
+                    switchDiv.className = 'bg-blue-100 border border-blue-400 text-blue-700 px-4 py-3 rounded mt-2';
+                    switchDiv.innerHTML = `
+                        <div class="flex items-center justify-between">
+                            <span>Already have an account?</span>
+                            <button type="button" onclick="toggleAuthMode()" class="text-blue-800 underline hover:text-blue-900">
+                                Switch to Login
+                            </button>
+                        </div>
+                    `;
+                    document.getElementById('auth-form').appendChild(switchDiv);
+                    
+                    // Remove switch message after 8 seconds
+                    setTimeout(() => switchDiv.remove(), 8000);
+                }
+                
+                // Remove error after 8 seconds
+                setTimeout(() => errorDiv.remove(), 8000);
             }
         });
 
@@ -1039,5 +1091,5 @@
         // Initialize
         updateAuthButton();
     </script>
-<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9913853f672a8a67',t:'MTc2MDkxMDkzNS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'99138dd8c1b48a67',t:'MTc2MDkxMTI4OC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
