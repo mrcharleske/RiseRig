@@ -925,27 +925,50 @@
             
             const email = document.getElementById('auth-email').value;
             const password = document.getElementById('auth-password').value;
+            const submitBtn = document.getElementById('auth-submit');
             
-            // Remove existing error messages
-            const existingError = document.querySelector('.bg-red-100');
-            if (existingError) existingError.remove();
+            // Show loading state
+            const originalText = submitBtn.textContent;
+            submitBtn.textContent = 'Processing...';
+            submitBtn.disabled = true;
+            
+            // Remove existing messages
+            const existingMessages = document.querySelectorAll('.bg-red-100, .bg-blue-100, .bg-green-100');
+            existingMessages.forEach(msg => msg.remove());
             
             try {
-                if (window.firebaseAuth) {
+                console.log('Attempting authentication...', { email, isLoginMode });
+                
+                if (window.firebaseAuth && window.signInWithEmailAndPassword && window.createUserWithEmailAndPassword) {
+                    let userCredential;
+                    
                     if (isLoginMode) {
-                        await window.signInWithEmailAndPassword(window.firebaseAuth, email, password);
+                        console.log('Signing in...');
+                        userCredential = await window.signInWithEmailAndPassword(window.firebaseAuth, email, password);
                     } else {
-                        await window.createUserWithEmailAndPassword(window.firebaseAuth, email, password);
+                        console.log('Creating account...');
+                        userCredential = await window.createUserWithEmailAndPassword(window.firebaseAuth, email, password);
                     }
+                    
+                    console.log('Authentication successful:', userCredential.user);
+                    
+                    // Success will be handled by onAuthStateChanged
+                    showSuccessMessage(isLoginMode ? 'Login successful!' : 'Account created successfully!');
+                    
                 } else {
-                    // Demo mode
+                    console.log('Firebase not available, using demo mode');
+                    // Demo mode fallback
                     currentUser = { email: email };
                     document.getElementById('user-email').textContent = email;
                     updateAuthButton();
                     hideAuthModal();
                     showDashboard();
+                    showSuccessMessage('Demo login successful!');
                 }
+                
             } catch (error) {
+                console.error('Authentication error:', error);
+                
                 let errorMessage = '';
                 
                 // Handle specific Firebase auth errors with user-friendly messages
@@ -971,22 +994,14 @@
                     case 'auth/network-request-failed':
                         errorMessage = 'Network error. Please check your internet connection.';
                         break;
+                    case 'auth/invalid-credential':
+                        errorMessage = 'Invalid email or password. Please check your credentials.';
+                        break;
                     default:
                         errorMessage = error.message || 'Authentication failed. Please try again.';
                 }
                 
-                // Create inline error message
-                const errorDiv = document.createElement('div');
-                errorDiv.className = 'bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mt-4';
-                errorDiv.innerHTML = `
-                    <div class="flex items-center">
-                        <i class="fas fa-exclamation-triangle mr-2"></i>
-                        <span>${errorMessage}</span>
-                    </div>
-                `;
-                
-                // Add error message to form
-                document.getElementById('auth-form').appendChild(errorDiv);
+                showErrorMessage(errorMessage);
                 
                 // If email already exists, suggest switching to login
                 if (error.code === 'auth/email-already-in-use' && !isLoginMode) {
@@ -1006,10 +1021,39 @@
                     setTimeout(() => switchDiv.remove(), 8000);
                 }
                 
-                // Remove error after 8 seconds
-                setTimeout(() => errorDiv.remove(), 8000);
+            } finally {
+                // Reset button state
+                submitBtn.textContent = originalText;
+                submitBtn.disabled = false;
             }
         });
+        
+        // Helper functions for messages
+        function showErrorMessage(message) {
+            const errorDiv = document.createElement('div');
+            errorDiv.className = 'bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mt-4';
+            errorDiv.innerHTML = `
+                <div class="flex items-center">
+                    <i class="fas fa-exclamation-triangle mr-2"></i>
+                    <span>${message}</span>
+                </div>
+            `;
+            document.getElementById('auth-form').appendChild(errorDiv);
+            setTimeout(() => errorDiv.remove(), 8000);
+        }
+        
+        function showSuccessMessage(message) {
+            const successDiv = document.createElement('div');
+            successDiv.className = 'bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded mt-4';
+            successDiv.innerHTML = `
+                <div class="flex items-center">
+                    <i class="fas fa-check-circle mr-2"></i>
+                    <span>${message}</span>
+                </div>
+            `;
+            document.getElementById('auth-form').appendChild(successDiv);
+            setTimeout(() => successDiv.remove(), 3000);
+        }
 
         // Contact form submission
         document.getElementById('contact-form').addEventListener('submit', (e) => {
@@ -1091,5 +1135,5 @@
         // Initialize
         updateAuthButton();
     </script>
-<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'99138dd8c1b48a67',t:'MTc2MDkxMTI4OC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'991398b7128a8a67',t:'MTc2MDkxMTczMi4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
