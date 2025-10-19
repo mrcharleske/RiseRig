@@ -563,7 +563,7 @@
             </div>
 
             <!-- Sidebar -->
-            <div id="dashboard-sidebar" class="w-full lg:w-64 bg-white shadow-lg lg:block hidden">
+            <div id="dashboard-sidebar" class="w-full lg:w-64 bg-white shadow-lg lg:block hidden lg:relative absolute top-0 left-0 right-0 z-10">
                 <div class="p-6 hidden lg:block">
                     <h2 class="text-xl font-bold text-gold">Riserig Dashboard</h2>
                 </div>
@@ -594,8 +594,14 @@
                         <h2 class="text-2xl font-bold mb-6 text-gray-800">Profile Information</h2>
                         <div class="bg-white rounded-lg shadow p-6">
                             <div class="flex items-center mb-6">
-                                <div class="w-20 h-20 gold-gradient rounded-full flex items-center justify-center text-white text-2xl font-bold">
-                                    U
+                                <div class="relative">
+                                    <div class="w-20 h-20 gold-gradient rounded-full flex items-center justify-center text-white text-2xl font-bold overflow-hidden">
+                                        U
+                                    </div>
+                                    <label for="profile-picture" class="absolute bottom-0 right-0 bg-gold text-white rounded-full w-6 h-6 flex items-center justify-center cursor-pointer hover:bg-gold-dark transition duration-300">
+                                        <i class="fas fa-camera text-xs"></i>
+                                    </label>
+                                    <input type="file" id="profile-picture" accept="image/*" class="hidden" onchange="handleProfilePictureUpload(event)">
                                 </div>
                                 <div class="ml-6">
                                     <h3 class="text-xl font-semibold text-gray-800">Student Name</h3>
@@ -1127,7 +1133,55 @@
             setTimeout(() => successDiv.remove(), 5000);
         });
 
-        // Profile form submission
+        // Profile form submission and management
+        function initializeProfile() {
+            // Load saved profile data
+            const savedProfile = localStorage.getItem('userProfile');
+            if (savedProfile) {
+                const profile = JSON.parse(savedProfile);
+                document.getElementById('full-name').value = profile.fullName || '';
+                document.getElementById('phone-number').value = profile.phoneNumber || '';
+                
+                // Update profile display
+                updateProfileDisplay(profile);
+            }
+        }
+
+        function updateProfileDisplay(profile) {
+            const profileName = document.querySelector('#dashboard-profile h3');
+            const profileAvatar = document.querySelector('#dashboard-profile .gold-gradient');
+            
+            if (profile.fullName && profileName) {
+                profileName.textContent = profile.fullName;
+            }
+            
+            if (profile.profilePicture && profileAvatar) {
+                profileAvatar.innerHTML = `<img src="${profile.profilePicture}" alt="Profile" class="w-full h-full rounded-full object-cover">`;
+            } else if (profile.fullName && profileAvatar) {
+                profileAvatar.textContent = profile.fullName.charAt(0).toUpperCase();
+            }
+        }
+
+        function handleProfilePictureUpload(event) {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const imageData = e.target.result;
+                    
+                    // Update profile picture display
+                    const profileAvatar = document.querySelector('#dashboard-profile .gold-gradient');
+                    profileAvatar.innerHTML = `<img src="${imageData}" alt="Profile" class="w-full h-full rounded-full object-cover">`;
+                    
+                    // Save to localStorage
+                    const savedProfile = JSON.parse(localStorage.getItem('userProfile') || '{}');
+                    savedProfile.profilePicture = imageData;
+                    localStorage.setItem('userProfile', JSON.stringify(savedProfile));
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+
         document.addEventListener('DOMContentLoaded', () => {
             const profileForm = document.getElementById('profile-form');
             if (profileForm) {
@@ -1138,16 +1192,29 @@
                     const fullName = formData.get('fullName');
                     const phoneNumber = formData.get('phoneNumber');
                     
-                    // Save to localStorage for demo purposes
-                    localStorage.setItem('userProfile', JSON.stringify({
+                    // Get existing profile data
+                    const savedProfile = JSON.parse(localStorage.getItem('userProfile') || '{}');
+                    
+                    // Update profile data
+                    const updatedProfile = {
+                        ...savedProfile,
                         fullName,
                         phoneNumber,
                         email: currentUser?.email || document.getElementById('user-email').textContent
-                    }));
+                    };
+                    
+                    // Save to localStorage
+                    localStorage.setItem('userProfile', JSON.stringify(updatedProfile));
+                    
+                    // Update profile display
+                    updateProfileDisplay(updatedProfile);
                     
                     // Create success message
+                    const existingMessage = document.querySelector('.profile-success-message');
+                    if (existingMessage) existingMessage.remove();
+                    
                     const successDiv = document.createElement('div');
-                    successDiv.className = 'bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded mt-4';
+                    successDiv.className = 'profile-success-message bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded mt-4';
                     successDiv.innerHTML = `
                         <div class="flex items-center">
                             <i class="fas fa-check-circle mr-2"></i>
@@ -1162,6 +1229,9 @@
                     setTimeout(() => successDiv.remove(), 3000);
                 });
             }
+            
+            // Initialize profile on page load
+            setTimeout(initializeProfile, 500);
         });
 
         // Mobile dashboard menu toggle
@@ -1172,6 +1242,16 @@
             if (mobileDashboardMenu && dashboardSidebar) {
                 mobileDashboardMenu.addEventListener('click', () => {
                     dashboardSidebar.classList.toggle('hidden');
+                });
+                
+                // Close sidebar when clicking outside on mobile
+                document.addEventListener('click', (e) => {
+                    if (window.innerWidth < 1024 && 
+                        !dashboardSidebar.contains(e.target) && 
+                        !mobileDashboardMenu.contains(e.target) &&
+                        !dashboardSidebar.classList.contains('hidden')) {
+                        dashboardSidebar.classList.add('hidden');
+                    }
                 });
             }
         });
@@ -1241,5 +1321,5 @@
         // Initialize
         updateAuthButton();
     </script>
-<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9913bbdc41d88a67',t:'MTc2MDkxMzE3Mi4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9913ccac56008a67',t:'MTc2MDkxMzg2MC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
