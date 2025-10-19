@@ -1,0 +1,964 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Riserig - Online Learning Platform for Kids & Teens</title>
+    <meta name="description" content="Join Riserig's holiday coding program! Learn programming and digital skills. Courses for ages 10+ starting Nov 17th - Dec 11th.">
+    <link rel="manifest" href="data:application/json;base64,eyJuYW1lIjoiUmlzZXJpZyIsInNob3J0X25hbWUiOiJSaXNlcmlnIiwic3RhcnRfdXJsIjoiLyIsImRpc3BsYXkiOiJzdGFuZGFsb25lIiwiYmFja2dyb3VuZF9jb2xvciI6IiNmZmZmZmYiLCJ0aGVtZV9jb2xvciI6IiMwMEI0RDgiLCJpY29ucyI6W3sic3JjIjoiZGF0YTppbWFnZS9zdmcreG1sO2Jhc2U2NCxQSE4yWnlCM2FXUjBhRDBpTVRJNElpQm9aV2xuYUhROUlqRXlPQ0lpSUhacFpYZENiM2c5SWpBZ01DQXhNamdnTVRJNElpQm1hV3hzUFNJak1EQkNORVE0SWo0OGNtVmpkQ0IzYVdSMGFEMGlNVEk0SWlCb1pXbG5hSFE5SWpFeU9DSWlJSEo0UFNJeE1pSWdabWxzYkQwaWQyaHBkR1VpTHo0OEwzTjJaejQ9Iiwic2l6ZXMiOiIxMjh4MTI4IiwidHlwZSI6ImltYWdlL3N2Zyt4bWwifV19">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <script type="module">
+        import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
+        import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged, signOut } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
+        
+        // Firebase config placeholder - replace with your actual config
+        const firebaseConfig = {
+            apiKey: "demo-key",
+            authDomain: "riserig-demo.firebaseapp.com",
+            projectId: "riserig-demo"
+        };
+        
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        
+        window.firebaseAuth = auth;
+        window.createUserWithEmailAndPassword = createUserWithEmailAndPassword;
+        window.signInWithEmailAndPassword = signInWithEmailAndPassword;
+        window.onAuthStateChanged = onAuthStateChanged;
+        window.signOut = signOut;
+    </script>
+    <style>
+        body {
+            box-sizing: border-box;
+        }
+        
+        .gradient-bg {
+            background: linear-gradient(135deg, #00B4D8 0%, #0077B6 100%);
+        }
+        
+        .floating-whatsapp {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            z-index: 1000;
+            animation: pulse 2s infinite;
+        }
+        
+        .scroll-to-top {
+            position: fixed;
+            bottom: 80px;
+            right: 20px;
+            z-index: 999;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+        
+        .scroll-to-top.show {
+            opacity: 1;
+        }
+        
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); }
+        }
+        
+        .pwa-banner {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background: #00B4D8;
+            color: white;
+            padding: 10px;
+            text-align: center;
+            z-index: 1001;
+            transform: translateY(-100%);
+            transition: transform 0.3s;
+        }
+        
+        .pwa-banner.show {
+            transform: translateY(0);
+        }
+        
+        .course-card {
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+        
+        .course-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+        }
+    </style>
+</head>
+<body class="bg-gray-50">
+    <!-- PWA Install Banner -->
+    <div id="pwa-banner" class="pwa-banner">
+        <div class="flex items-center justify-between max-w-4xl mx-auto px-4">
+            <span>📱 Install Riserig App on your device for better experience!</span>
+            <div>
+                <button id="install-btn" class="bg-white text-blue-600 px-3 py-1 rounded text-sm mr-2">Install</button>
+                <button id="close-banner" class="text-white">✕</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Navigation -->
+    <nav class="bg-white shadow-lg fixed w-full top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <div class="flex items-center">
+                    <div class="flex-shrink-0">
+                        <h1 class="text-2xl font-bold text-blue-600">Riserig</h1>
+                    </div>
+                </div>
+                <div class="hidden md:block">
+                    <div class="ml-10 flex items-baseline space-x-4">
+                        <a href="#home" class="nav-link text-gray-700 hover:text-blue-600 px-3 py-2 rounded-md text-sm font-medium">Home</a>
+                        <a href="#courses" class="nav-link text-gray-700 hover:text-blue-600 px-3 py-2 rounded-md text-sm font-medium">Courses</a>
+                        <a href="#contact" class="nav-link text-gray-700 hover:text-blue-600 px-3 py-2 rounded-md text-sm font-medium">Contact</a>
+                        <button id="auth-btn" class="bg-blue-600 text-white px-4 py-2 rounded-md text-sm font-medium hover:bg-blue-700">Login</button>
+                    </div>
+                </div>
+                <div class="md:hidden">
+                    <button id="mobile-menu-btn" class="text-gray-700 hover:text-blue-600">
+                        <i class="fas fa-bars text-xl"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+        <!-- Mobile menu -->
+        <div id="mobile-menu" class="md:hidden hidden">
+            <div class="px-2 pt-2 pb-3 space-y-1 sm:px-3 bg-white border-t">
+                <a href="#home" class="nav-link block text-gray-700 hover:text-blue-600 px-3 py-2 rounded-md text-base font-medium">Home</a>
+                <a href="#courses" class="nav-link block text-gray-700 hover:text-blue-600 px-3 py-2 rounded-md text-base font-medium">Courses</a>
+                <a href="#contact" class="nav-link block text-gray-700 hover:text-blue-600 px-3 py-2 rounded-md text-base font-medium">Contact</a>
+                <button id="mobile-auth-btn" class="w-full text-left bg-blue-600 text-white px-3 py-2 rounded-md text-base font-medium hover:bg-blue-700">Login</button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main id="main-content">
+        <!-- Home Section -->
+        <section id="home" class="pt-16">
+            <!-- Hero Section -->
+            <div class="gradient-bg text-white py-20">
+                <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                    <div class="text-center" data-aos="fade-up">
+                        <h1 class="text-4xl md:text-6xl font-bold mb-6">
+                            Learn. Code. Create.
+                        </h1>
+                        <p class="text-xl md:text-2xl mb-8 max-w-3xl mx-auto">
+                            Join Riserig's Holiday Coding Program and unlock your potential in programming and digital skills!
+                        </p>
+                        <div class="bg-yellow-400 text-gray-800 inline-block px-6 py-3 rounded-full font-semibold mb-8">
+                            🎄 Holiday Program: November 17th - December 11th
+                        </div>
+                        <div class="space-y-4 sm:space-y-0 sm:space-x-4 sm:flex sm:justify-center">
+                            <button onclick="scrollToSection('courses')" class="bg-white text-blue-600 px-8 py-3 rounded-full font-semibold hover:bg-gray-100 transition duration-300 block sm:inline-block">
+                                Enroll Now
+                            </button>
+                            <button onclick="scrollToSection('courses')" class="border-2 border-white text-white px-8 py-3 rounded-full font-semibold hover:bg-white hover:text-blue-600 transition duration-300 block sm:inline-block">
+                                View Courses
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Features Section -->
+            <div class="py-16 bg-white">
+                <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                    <div class="text-center mb-12" data-aos="fade-up">
+                        <h2 class="text-3xl font-bold text-gray-900 mb-4">Why Choose Riserig?</h2>
+                        <p class="text-gray-600 max-w-2xl mx-auto">We provide comprehensive digital education that prepares students for the future</p>
+                    </div>
+                    <div class="grid md:grid-cols-3 gap-8">
+                        <div class="text-center" data-aos="fade-up" data-aos-delay="100">
+                            <div class="bg-blue-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
+                                <i class="fas fa-code text-blue-600 text-2xl"></i>
+                            </div>
+                            <h3 class="text-xl font-semibold mb-2">Hands-on Learning</h3>
+                            <p class="text-gray-600">Learn by doing with real projects and practical exercises</p>
+                        </div>
+                        <div class="text-center" data-aos="fade-up" data-aos-delay="200">
+                            <div class="bg-green-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
+                                <i class="fas fa-certificate text-green-600 text-2xl"></i>
+                            </div>
+                            <h3 class="text-xl font-semibold mb-2">Certificates</h3>
+                            <p class="text-gray-600">Earn recognized certificates upon course completion</p>
+                        </div>
+                        <div class="text-center" data-aos="fade-up" data-aos-delay="300">
+                            <div class="bg-purple-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
+                                <i class="fas fa-users text-purple-600 text-2xl"></i>
+                            </div>
+                            <h3 class="text-xl font-semibold mb-2">Expert Instructors</h3>
+                            <p class="text-gray-600">Learn from industry professionals and experienced educators</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Testimonials Section -->
+            <div class="py-16 bg-gray-100">
+                <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                    <div class="text-center mb-12" data-aos="fade-up">
+                        <h2 class="text-3xl font-bold text-gray-900 mb-4">What Our Students Say</h2>
+                    </div>
+                    <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+                        <div class="bg-white p-6 rounded-lg shadow-md" data-aos="fade-up" data-aos-delay="100">
+                            <div class="flex items-center mb-4">
+                                <div class="w-12 h-12 bg-blue-500 rounded-full flex items-center justify-center text-white font-bold">A</div>
+                                <div class="ml-4">
+                                    <h4 class="font-semibold">Alex M.</h4>
+                                    <p class="text-gray-600 text-sm">Age 15</p>
+                                </div>
+                            </div>
+                            <p class="text-gray-700">"Riserig helped me build my first website! The instructors are amazing and make coding fun."</p>
+                        </div>
+                        <div class="bg-white p-6 rounded-lg shadow-md" data-aos="fade-up" data-aos-delay="200">
+                            <div class="flex items-center mb-4">
+                                <div class="w-12 h-12 bg-green-500 rounded-full flex items-center justify-center text-white font-bold">S</div>
+                                <div class="ml-4">
+                                    <h4 class="font-semibold">Sarah K.</h4>
+                                    <p class="text-gray-600 text-sm">Age 12</p>
+                                </div>
+                            </div>
+                            <p class="text-gray-700">"I learned Python and created my own game! Can't wait for the next course."</p>
+                        </div>
+                        <div class="bg-white p-6 rounded-lg shadow-md" data-aos="fade-up" data-aos-delay="300">
+                            <div class="flex items-center mb-4">
+                                <div class="w-12 h-12 bg-purple-500 rounded-full flex items-center justify-center text-white font-bold">M</div>
+                                <div class="ml-4">
+                                    <h4 class="font-semibold">Mike R.</h4>
+                                    <p class="text-gray-600 text-sm">Age 16</p>
+                                </div>
+                            </div>
+                            <p class="text-gray-700">"The holiday program was perfect timing. I learned so much during the break!"</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Courses Section -->
+        <section id="courses" class="py-16 bg-white">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="text-center mb-12" data-aos="fade-up">
+                    <h2 class="text-3xl font-bold text-gray-900 mb-4">Our Courses</h2>
+                    <p class="text-gray-600 max-w-2xl mx-auto">Start your learning journey with our comprehensive programs</p>
+                </div>
+
+                <!-- Holiday Coding Program -->
+                <div class="mb-16">
+                    <div class="bg-gradient-to-r from-blue-600 to-blue-800 text-white rounded-2xl p-8 mb-8" data-aos="fade-up">
+                        <div class="flex flex-col lg:flex-row items-center justify-between">
+                            <div class="lg:w-2/3 mb-6 lg:mb-0">
+                                <h3 class="text-3xl font-bold mb-4">🎄 Holiday Coding Program</h3>
+                                <p class="text-xl mb-4">November 17th - December 11th, 2024</p>
+                                <p class="text-lg opacity-90">Learn programming fundamentals, web development, and digital skills during the holiday break!</p>
+                            </div>
+                            <div class="lg:w-1/3 text-center">
+                                <div class="bg-white text-blue-600 rounded-lg p-4 inline-block">
+                                    <div class="text-2xl font-bold">25 Days</div>
+                                    <div class="text-sm">Intensive Learning</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Pricing Cards -->
+                    <div class="grid md:grid-cols-3 gap-8 mb-8">
+                        <div class="course-card bg-white rounded-lg shadow-lg p-6 border-2 border-gray-200" data-aos="fade-up" data-aos-delay="100">
+                            <div class="text-center">
+                                <h4 class="text-xl font-bold mb-2">Beginners (10-13 years)</h4>
+                                <div class="text-3xl font-bold text-blue-600 mb-4">Ksh 8,500</div>
+                                <ul class="text-left space-y-2 mb-6">
+                                    <li class="flex items-center"><i class="fas fa-check text-green-500 mr-2"></i> Scratch Programming</li>
+                                    <li class="flex items-center"><i class="fas fa-check text-green-500 mr-2"></i> Basic HTML/CSS</li>
+                                    <li class="flex items-center"><i class="fas fa-check text-green-500 mr-2"></i> Digital Literacy</li>
+                                    <li class="flex items-center"><i class="fas fa-check text-green-500 mr-2"></i> Certificate</li>
+                                </ul>
+                                <button onclick="showPaymentModal('beginners')" class="w-full bg-blue-600 text-white py-3 rounded-lg hover:bg-blue-700 transition duration-300">
+                                    Enroll Now
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="course-card bg-white rounded-lg shadow-lg p-6 border-2 border-blue-500 relative" data-aos="fade-up" data-aos-delay="200">
+                            <div class="absolute -top-3 left-1/2 transform -translate-x-1/2 bg-blue-500 text-white px-4 py-1 rounded-full text-sm">
+                                Most Popular
+                            </div>
+                            <div class="text-center">
+                                <h4 class="text-xl font-bold mb-2">Intermediate (14-17 years)</h4>
+                                <div class="text-3xl font-bold text-blue-600 mb-4">Ksh 11,000</div>
+                                <ul class="text-left space-y-2 mb-6">
+                                    <li class="flex items-center"><i class="fas fa-check text-green-500 mr-2"></i> Python Programming</li>
+                                    <li class="flex items-center"><i class="fas fa-check text-green-500 mr-2"></i> Web Development</li>
+                                    <li class="flex items-center"><i class="fas fa-check text-green-500 mr-2"></i> Database Basics</li>
+                                    <li class="flex items-center"><i class="fas fa-check text-green-500 mr-2"></i> Certificate</li>
+                                </ul>
+                                <button onclick="showPaymentModal('intermediate')" class="w-full bg-blue-600 text-white py-3 rounded-lg hover:bg-blue-700 transition duration-300">
+                                    Enroll Now
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="course-card bg-white rounded-lg shadow-lg p-6 border-2 border-gray-200" data-aos="fade-up" data-aos-delay="300">
+                            <div class="text-center">
+                                <h4 class="text-xl font-bold mb-2">Advanced (18+ years)</h4>
+                                <div class="text-3xl font-bold text-blue-600 mb-4">Ksh 15,000</div>
+                                <ul class="text-left space-y-2 mb-6">
+                                    <li class="flex items-center"><i class="fas fa-check text-green-500 mr-2"></i> Full-Stack Development</li>
+                                    <li class="flex items-center"><i class="fas fa-check text-green-500 mr-2"></i> React & Node.js</li>
+                                    <li class="flex items-center"><i class="fas fa-check text-green-500 mr-2"></i> Project Portfolio</li>
+                                    <li class="flex items-center"><i class="fas fa-check text-green-500 mr-2"></i> Certificate</li>
+                                </ul>
+                                <button onclick="showPaymentModal('advanced')" class="w-full bg-blue-600 text-white py-3 rounded-lg hover:bg-blue-700 transition duration-300">
+                                    Enroll Now
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Coming Soon Courses -->
+                <div>
+                    <h3 class="text-2xl font-bold text-center mb-8" data-aos="fade-up">Coming Soon</h3>
+                    <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+                        <div class="bg-gray-100 rounded-lg p-6 text-center opacity-75" data-aos="fade-up" data-aos-delay="100">
+                            <div class="w-16 h-16 bg-pink-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                                <i class="fas fa-palette text-pink-600 text-2xl"></i>
+                            </div>
+                            <h4 class="text-xl font-semibold mb-2">Graphic Design</h4>
+                            <p class="text-gray-600 mb-4">Learn design principles, Photoshop, and create stunning visuals</p>
+                            <div class="bg-yellow-400 text-gray-800 px-4 py-2 rounded-full text-sm font-semibold">
+                                Coming Soon
+                            </div>
+                        </div>
+
+                        <div class="bg-gray-100 rounded-lg p-6 text-center opacity-75" data-aos="fade-up" data-aos-delay="200">
+                            <div class="w-16 h-16 bg-orange-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                                <i class="fas fa-bullhorn text-orange-600 text-2xl"></i>
+                            </div>
+                            <h4 class="text-xl font-semibold mb-2">Digital Marketing</h4>
+                            <p class="text-gray-600 mb-4">Master social media, SEO, and online advertising strategies</p>
+                            <div class="bg-yellow-400 text-gray-800 px-4 py-2 rounded-full text-sm font-semibold">
+                                Coming Soon
+                            </div>
+                        </div>
+
+                        <div class="bg-gray-100 rounded-lg p-6 text-center opacity-75" data-aos="fade-up" data-aos-delay="300">
+                            <div class="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                                <i class="fas fa-lightbulb text-green-600 text-2xl"></i>
+                            </div>
+                            <h4 class="text-xl font-semibold mb-2">Entrepreneurship</h4>
+                            <p class="text-gray-600 mb-4">Build business skills and learn to launch your own startup</p>
+                            <div class="bg-yellow-400 text-gray-800 px-4 py-2 rounded-full text-sm font-semibold">
+                                Coming Soon
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Contact Section -->
+        <section id="contact" class="py-16 bg-gray-100">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="text-center mb-12" data-aos="fade-up">
+                    <h2 class="text-3xl font-bold text-gray-900 mb-4">Get In Touch</h2>
+                    <p class="text-gray-600 max-w-2xl mx-auto">Have questions? We're here to help you start your learning journey</p>
+                </div>
+
+                <div class="grid lg:grid-cols-2 gap-12">
+                    <div data-aos="fade-right">
+                        <h3 class="text-xl font-semibold mb-6">Contact Information</h3>
+                        <div class="space-y-4">
+                            <div class="flex items-center">
+                                <i class="fas fa-envelope text-blue-600 w-6"></i>
+                                <span class="ml-3">info@riserig.com</span>
+                            </div>
+                            <div class="flex items-center">
+                                <i class="fab fa-whatsapp text-green-600 w-6"></i>
+                                <span class="ml-3">+254 700 000 000</span>
+                            </div>
+                            <div class="flex items-center">
+                                <i class="fas fa-map-marker-alt text-red-600 w-6"></i>
+                                <span class="ml-3">Nairobi, Kenya</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div data-aos="fade-left">
+                        <form id="contact-form" class="space-y-6">
+                            <div>
+                                <label for="name" class="block text-sm font-medium text-gray-700 mb-2">Name</label>
+                                <input type="text" id="name" name="name" required class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                            </div>
+                            <div>
+                                <label for="email" class="block text-sm font-medium text-gray-700 mb-2">Email</label>
+                                <input type="email" id="email" name="email" required class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                            </div>
+                            <div>
+                                <label for="message" class="block text-sm font-medium text-gray-700 mb-2">Message</label>
+                                <textarea id="message" name="message" rows="4" required class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"></textarea>
+                            </div>
+                            <button type="submit" class="w-full bg-blue-600 text-white py-3 rounded-lg hover:bg-blue-700 transition duration-300">
+                                Send Message
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Auth Modal -->
+    <div id="auth-modal" class="fixed inset-0 bg-black bg-opacity-50 hidden z-50 flex items-center justify-center p-4">
+        <div class="bg-white rounded-lg max-w-md w-full p-6">
+            <div class="flex justify-between items-center mb-6">
+                <h3 id="auth-title" class="text-xl font-bold">Login</h3>
+                <button id="close-auth-modal" class="text-gray-500 hover:text-gray-700">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            
+            <form id="auth-form">
+                <div class="space-y-4">
+                    <div>
+                        <label for="auth-email" class="block text-sm font-medium text-gray-700 mb-2">Email</label>
+                        <input type="email" id="auth-email" required class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                    </div>
+                    <div>
+                        <label for="auth-password" class="block text-sm font-medium text-gray-700 mb-2">Password</label>
+                        <input type="password" id="auth-password" required class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                    </div>
+                </div>
+                
+                <button type="submit" id="auth-submit" class="w-full bg-blue-600 text-white py-3 rounded-lg hover:bg-blue-700 transition duration-300 mt-6">
+                    Login
+                </button>
+            </form>
+            
+            <div class="text-center mt-4">
+                <button id="toggle-auth" class="text-blue-600 hover:text-blue-700">
+                    Don't have an account? Sign up
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Payment Modal -->
+    <div id="payment-modal" class="fixed inset-0 bg-black bg-opacity-50 hidden z-50 flex items-center justify-center p-4">
+        <div class="bg-white rounded-lg max-w-md w-full p-6">
+            <div class="flex justify-between items-center mb-6">
+                <h3 class="text-xl font-bold">Course Enrollment</h3>
+                <button id="close-payment-modal" class="text-gray-500 hover:text-gray-700">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            
+            <div id="payment-content">
+                <div class="text-center mb-6">
+                    <div class="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <i class="fas fa-credit-card text-green-600 text-2xl"></i>
+                    </div>
+                    <h4 id="payment-course-title" class="text-lg font-semibold mb-2"></h4>
+                    <div id="payment-price" class="text-2xl font-bold text-blue-600 mb-4"></div>
+                </div>
+                
+                <div class="bg-yellow-50 border border-yellow-200 rounded-lg p-4 mb-6">
+                    <div class="flex items-center">
+                        <i class="fas fa-info-circle text-yellow-600 mr-2"></i>
+                        <span class="text-sm text-yellow-800">Secure payment powered by Paystack (coming soon)</span>
+                    </div>
+                </div>
+                
+                <button class="w-full bg-green-600 text-white py-3 rounded-lg hover:bg-green-700 transition duration-300 mb-4">
+                    Pay Now (Coming Soon - Paystack Integration)
+                </button>
+                
+                <div class="text-xs text-gray-600 text-center">
+                    Payments will be securely processed through Paystack.<br>
+                    Funds go directly to Afreach Creatives Equity Bank account.
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Dashboard -->
+    <div id="dashboard" class="hidden">
+        <div class="flex h-screen bg-gray-100">
+            <!-- Sidebar -->
+            <div class="w-64 bg-white shadow-lg">
+                <div class="p-6">
+                    <h2 class="text-xl font-bold text-blue-600">Riserig Dashboard</h2>
+                </div>
+                <nav class="mt-6">
+                    <a href="#" onclick="showDashboardSection('profile')" class="dashboard-nav-item block px-6 py-3 text-gray-700 hover:bg-blue-50 hover:text-blue-600">
+                        <i class="fas fa-user mr-3"></i> Profile
+                    </a>
+                    <a href="#" onclick="showDashboardSection('courses')" class="dashboard-nav-item block px-6 py-3 text-gray-700 hover:bg-blue-50 hover:text-blue-600">
+                        <i class="fas fa-book mr-3"></i> My Courses
+                    </a>
+                    <a href="#" onclick="showDashboardSection('payments')" class="dashboard-nav-item block px-6 py-3 text-gray-700 hover:bg-blue-50 hover:text-blue-600">
+                        <i class="fas fa-credit-card mr-3"></i> Payments
+                    </a>
+                    <a href="#" onclick="showDashboardSection('certificates')" class="dashboard-nav-item block px-6 py-3 text-gray-700 hover:bg-blue-50 hover:text-blue-600">
+                        <i class="fas fa-certificate mr-3"></i> Certificates
+                    </a>
+                    <a href="#" onclick="logout()" class="block px-6 py-3 text-red-600 hover:bg-red-50">
+                        <i class="fas fa-sign-out-alt mr-3"></i> Logout
+                    </a>
+                </nav>
+            </div>
+
+            <!-- Main Content -->
+            <div class="flex-1 overflow-auto">
+                <div class="p-8">
+                    <!-- Profile Section -->
+                    <div id="dashboard-profile" class="dashboard-section">
+                        <h2 class="text-2xl font-bold mb-6">Profile Information</h2>
+                        <div class="bg-white rounded-lg shadow p-6">
+                            <div class="flex items-center mb-6">
+                                <div class="w-20 h-20 bg-blue-500 rounded-full flex items-center justify-center text-white text-2xl font-bold">
+                                    U
+                                </div>
+                                <div class="ml-6">
+                                    <h3 class="text-xl font-semibold">Student Name</h3>
+                                    <p class="text-gray-600" id="user-email">student@example.com</p>
+                                </div>
+                            </div>
+                            <div class="grid md:grid-cols-2 gap-6">
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">Full Name</label>
+                                    <input type="text" class="w-full px-4 py-2 border border-gray-300 rounded-lg" placeholder="Enter your full name">
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">Phone Number</label>
+                                    <input type="tel" class="w-full px-4 py-2 border border-gray-300 rounded-lg" placeholder="Enter your phone number">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Courses Section -->
+                    <div id="dashboard-courses" class="dashboard-section hidden">
+                        <h2 class="text-2xl font-bold mb-6">My Courses</h2>
+                        <div class="grid md:grid-cols-2 gap-6">
+                            <div class="bg-white rounded-lg shadow p-6">
+                                <h3 class="text-lg font-semibold mb-2">Holiday Coding Program</h3>
+                                <p class="text-gray-600 mb-4">November 17th - December 11th</p>
+                                <div class="flex justify-between items-center">
+                                    <span class="bg-green-100 text-green-800 px-3 py-1 rounded-full text-sm">Enrolled</span>
+                                    <button class="text-blue-600 hover:text-blue-700">View Details</button>
+                                </div>
+                            </div>
+                            <div class="bg-gray-100 rounded-lg p-6 text-center">
+                                <i class="fas fa-plus text-gray-400 text-3xl mb-4"></i>
+                                <p class="text-gray-600">No additional courses enrolled</p>
+                                <button onclick="showMainContent()" class="text-blue-600 hover:text-blue-700 mt-2">Browse Courses</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Payments Section -->
+                    <div id="dashboard-payments" class="dashboard-section hidden">
+                        <h2 class="text-2xl font-bold mb-6">Payment History</h2>
+                        <div class="bg-white rounded-lg shadow">
+                            <div class="p-6 border-b">
+                                <div class="flex justify-between items-center">
+                                    <div>
+                                        <h3 class="font-semibold">Holiday Coding Program</h3>
+                                        <p class="text-gray-600 text-sm">Intermediate (14-17 years)</p>
+                                    </div>
+                                    <div class="text-right">
+                                        <div class="font-semibold">Ksh 11,000</div>
+                                        <span class="bg-yellow-100 text-yellow-800 px-2 py-1 rounded text-sm">Pending</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="p-6">
+                                <div class="bg-blue-50 border border-blue-200 rounded-lg p-4">
+                                    <div class="flex items-center">
+                                        <i class="fas fa-info-circle text-blue-600 mr-2"></i>
+                                        <span class="text-sm text-blue-800">Paystack integration coming soon for secure payments</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Certificates Section -->
+                    <div id="dashboard-certificates" class="dashboard-section hidden">
+                        <h2 class="text-2xl font-bold mb-6">Certificates</h2>
+                        <div class="bg-white rounded-lg shadow p-8 text-center">
+                            <i class="fas fa-certificate text-gray-400 text-6xl mb-4"></i>
+                            <h3 class="text-xl font-semibold mb-2">No Certificates Yet</h3>
+                            <p class="text-gray-600 mb-4">Complete your courses to earn certificates</p>
+                            <div class="bg-yellow-100 text-yellow-800 px-4 py-2 rounded-lg inline-block">
+                                Certificate system coming soon
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-gray-900 text-white py-12">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid md:grid-cols-4 gap-8">
+                <div>
+                    <h3 class="text-xl font-bold mb-4">Riserig</h3>
+                    <p class="text-gray-400">Empowering the next generation with digital skills and programming knowledge.</p>
+                </div>
+                <div>
+                    <h4 class="font-semibold mb-4">Quick Links</h4>
+                    <ul class="space-y-2 text-gray-400">
+                        <li><a href="#home" class="hover:text-white">Home</a></li>
+                        <li><a href="#courses" class="hover:text-white">Courses</a></li>
+                        <li><a href="#contact" class="hover:text-white">Contact</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="font-semibold mb-4">Courses</h4>
+                    <ul class="space-y-2 text-gray-400">
+                        <li>Holiday Coding Program</li>
+                        <li>Graphic Design (Coming Soon)</li>
+                        <li>Digital Marketing (Coming Soon)</li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="font-semibold mb-4">Contact</h4>
+                    <ul class="space-y-2 text-gray-400">
+                        <li>info@riserig.com</li>
+                        <li>+254 700 000 000</li>
+                        <li>Nairobi, Kenya</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="border-t border-gray-800 mt-8 pt-8 text-center text-gray-400">
+                <p>&copy; 2024 Riserig. All rights reserved. Powered by Afreach Creatives.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Floating WhatsApp Button -->
+    <a href="https://wa.me/254700000000" target="_blank" rel="noopener noreferrer" class="floating-whatsapp bg-green-500 text-white p-4 rounded-full shadow-lg hover:bg-green-600 transition duration-300">
+        <i class="fab fa-whatsapp text-2xl"></i>
+    </a>
+
+    <!-- Scroll to Top Button -->
+    <button id="scroll-to-top" class="scroll-to-top bg-blue-600 text-white p-3 rounded-full shadow-lg hover:bg-blue-700 transition duration-300">
+        <i class="fas fa-arrow-up"></i>
+    </button>
+
+    <script>
+        // Initialize AOS
+        AOS.init({
+            duration: 800,
+            once: true
+        });
+
+        // Global state
+        let currentUser = null;
+        let isLoginMode = true;
+
+        // DOM Elements
+        const authModal = document.getElementById('auth-modal');
+        const paymentModal = document.getElementById('payment-modal');
+        const dashboard = document.getElementById('dashboard');
+        const mainContent = document.getElementById('main-content');
+        const mobileMenu = document.getElementById('mobile-menu');
+        const scrollToTopBtn = document.getElementById('scroll-to-top');
+        const pwaBanner = document.getElementById('pwa-banner');
+
+        // Navigation
+        function scrollToSection(sectionId) {
+            const element = document.getElementById(sectionId);
+            if (element) {
+                element.scrollIntoView({ behavior: 'smooth' });
+            }
+        }
+
+        // Mobile menu toggle
+        document.getElementById('mobile-menu-btn').addEventListener('click', () => {
+            mobileMenu.classList.toggle('hidden');
+        });
+
+        // Smooth scrolling for nav links
+        document.querySelectorAll('.nav-link').forEach(link => {
+            link.addEventListener('click', (e) => {
+                e.preventDefault();
+                const targetId = link.getAttribute('href').substring(1);
+                scrollToSection(targetId);
+                mobileMenu.classList.add('hidden');
+            });
+        });
+
+        // Scroll to top functionality
+        window.addEventListener('scroll', () => {
+            if (window.pageYOffset > 300) {
+                scrollToTopBtn.classList.add('show');
+            } else {
+                scrollToTopBtn.classList.remove('show');
+            }
+        });
+
+        scrollToTopBtn.addEventListener('click', () => {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        });
+
+        // PWA Installation
+        let deferredPrompt;
+        
+        window.addEventListener('beforeinstallprompt', (e) => {
+            e.preventDefault();
+            deferredPrompt = e;
+            pwaBanner.classList.add('show');
+        });
+
+        document.getElementById('install-btn').addEventListener('click', async () => {
+            if (deferredPrompt) {
+                deferredPrompt.prompt();
+                const { outcome } = await deferredPrompt.userChoice;
+                deferredPrompt = null;
+                pwaBanner.classList.remove('show');
+            }
+        });
+
+        document.getElementById('close-banner').addEventListener('click', () => {
+            pwaBanner.classList.remove('show');
+        });
+
+        // Auth Modal Functions
+        function showAuthModal() {
+            authModal.classList.remove('hidden');
+        }
+
+        function hideAuthModal() {
+            authModal.classList.add('hidden');
+        }
+
+        function toggleAuthMode() {
+            isLoginMode = !isLoginMode;
+            const title = document.getElementById('auth-title');
+            const submitBtn = document.getElementById('auth-submit');
+            const toggleBtn = document.getElementById('toggle-auth');
+            
+            if (isLoginMode) {
+                title.textContent = 'Login';
+                submitBtn.textContent = 'Login';
+                toggleBtn.textContent = "Don't have an account? Sign up";
+            } else {
+                title.textContent = 'Sign Up';
+                submitBtn.textContent = 'Sign Up';
+                toggleBtn.textContent = 'Already have an account? Login';
+            }
+        }
+
+        // Payment Modal Functions
+        function showPaymentModal(courseType) {
+            const courseData = {
+                beginners: { title: 'Beginners (10-13 years)', price: 'Ksh 8,500' },
+                intermediate: { title: 'Intermediate (14-17 years)', price: 'Ksh 11,000' },
+                advanced: { title: 'Advanced (18+ years)', price: 'Ksh 15,000' }
+            };
+            
+            const course = courseData[courseType];
+            document.getElementById('payment-course-title').textContent = course.title;
+            document.getElementById('payment-price').textContent = course.price;
+            paymentModal.classList.remove('hidden');
+        }
+
+        function hidePaymentModal() {
+            paymentModal.classList.add('hidden');
+        }
+
+        // Dashboard Functions
+        function showDashboard() {
+            mainContent.classList.add('hidden');
+            dashboard.classList.remove('hidden');
+            showDashboardSection('profile');
+        }
+
+        function showMainContent() {
+            dashboard.classList.add('hidden');
+            mainContent.classList.remove('hidden');
+        }
+
+        function showDashboardSection(section) {
+            document.querySelectorAll('.dashboard-section').forEach(el => {
+                el.classList.add('hidden');
+            });
+            document.getElementById(`dashboard-${section}`).classList.remove('hidden');
+            
+            // Update nav active state
+            document.querySelectorAll('.dashboard-nav-item').forEach(el => {
+                el.classList.remove('bg-blue-50', 'text-blue-600');
+            });
+        }
+
+        function logout() {
+            if (window.signOut && window.firebaseAuth) {
+                window.signOut(window.firebaseAuth).then(() => {
+                    currentUser = null;
+                    updateAuthButton();
+                    showMainContent();
+                });
+            } else {
+                currentUser = null;
+                updateAuthButton();
+                showMainContent();
+            }
+        }
+
+        function updateAuthButton() {
+            const authBtn = document.getElementById('auth-btn');
+            const mobileAuthBtn = document.getElementById('mobile-auth-btn');
+            
+            if (currentUser) {
+                authBtn.textContent = 'Dashboard';
+                mobileAuthBtn.textContent = 'Dashboard';
+                authBtn.onclick = showDashboard;
+                mobileAuthBtn.onclick = showDashboard;
+            } else {
+                authBtn.textContent = 'Login';
+                mobileAuthBtn.textContent = 'Login';
+                authBtn.onclick = showAuthModal;
+                mobileAuthBtn.onclick = showAuthModal;
+            }
+        }
+
+        // Event Listeners
+        document.getElementById('auth-btn').addEventListener('click', () => {
+            if (currentUser) {
+                showDashboard();
+            } else {
+                showAuthModal();
+            }
+        });
+
+        document.getElementById('mobile-auth-btn').addEventListener('click', () => {
+            mobileMenu.classList.add('hidden');
+            if (currentUser) {
+                showDashboard();
+            } else {
+                showAuthModal();
+            }
+        });
+
+        document.getElementById('close-auth-modal').addEventListener('click', hideAuthModal);
+        document.getElementById('close-payment-modal').addEventListener('click', hidePaymentModal);
+        document.getElementById('toggle-auth').addEventListener('click', toggleAuthMode);
+
+        // Auth form submission
+        document.getElementById('auth-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const email = document.getElementById('auth-email').value;
+            const password = document.getElementById('auth-password').value;
+            
+            try {
+                if (window.firebaseAuth) {
+                    if (isLoginMode) {
+                        await window.signInWithEmailAndPassword(window.firebaseAuth, email, password);
+                    } else {
+                        await window.createUserWithEmailAndPassword(window.firebaseAuth, email, password);
+                    }
+                } else {
+                    // Demo mode
+                    currentUser = { email: email };
+                    document.getElementById('user-email').textContent = email;
+                    updateAuthButton();
+                    hideAuthModal();
+                    showDashboard();
+                }
+            } catch (error) {
+                alert('Authentication failed: ' + error.message);
+            }
+        });
+
+        // Contact form submission
+        document.getElementById('contact-form').addEventListener('submit', (e) => {
+            e.preventDefault();
+            
+            const formData = new FormData(e.target);
+            const name = formData.get('name');
+            const email = formData.get('email');
+            const message = formData.get('message');
+            
+            // Simulate form submission
+            alert(`Thank you ${name}! Your message has been sent. We'll get back to you soon.`);
+            e.target.reset();
+        });
+
+        // Firebase Auth State Observer
+        if (window.onAuthStateChanged && window.firebaseAuth) {
+            window.onAuthStateChanged(window.firebaseAuth, (user) => {
+                if (user) {
+                    currentUser = user;
+                    document.getElementById('user-email').textContent = user.email;
+                    updateAuthButton();
+                    hideAuthModal();
+                    showDashboard();
+                } else {
+                    currentUser = null;
+                    updateAuthButton();
+                    showMainContent();
+                }
+            });
+        }
+
+        // Close modals when clicking outside
+        authModal.addEventListener('click', (e) => {
+            if (e.target === authModal) hideAuthModal();
+        });
+
+        paymentModal.addEventListener('click', (e) => {
+            if (e.target === paymentModal) hidePaymentModal();
+        });
+
+        // Service Worker Registration
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                const swCode = `
+                    const CACHE_NAME = 'riserig-v1';
+                    const urlsToCache = ['/'];
+                    
+                    self.addEventListener('install', (event) => {
+                        event.waitUntil(
+                            caches.open(CACHE_NAME)
+                                .then((cache) => cache.addAll(urlsToCache))
+                        );
+                    });
+                    
+                    self.addEventListener('fetch', (event) => {
+                        event.respondWith(
+                            caches.match(event.request)
+                                .then((response) => response || fetch(event.request))
+                        );
+                    });
+                `;
+                
+                const blob = new Blob([swCode], { type: 'application/javascript' });
+                const swUrl = URL.createObjectURL(blob);
+                
+                navigator.serviceWorker.register(swUrl)
+                    .then(() => console.log('SW registered'))
+                    .catch(() => console.log('SW registration failed'));
+            });
+        }
+
+        // Initialize
+        updateAuthButton();
+    </script>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'991313aa71d38a64',t:'MTc2MDkwNjI4My4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>
