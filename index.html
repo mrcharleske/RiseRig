@@ -5,7 +5,16 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Riserig - Online Learning Platform for Kids & Teens</title>
     <meta name="description" content="Join Riserig's holiday coding program! Learn programming and digital skills. Courses for ages 10+ starting Nov 17th - Dec 11th.">
-    <link rel="manifest" href="data:application/json;base64,eyJuYW1lIjoiUmlzZXJpZyIsInNob3J0X25hbWUiOiJSaXNlcmlnIiwic3RhcnRfdXJsIjoiLyIsImRpc3BsYXkiOiJzdGFuZGFsb25lIiwiYmFja2dyb3VuZF9jb2xvciI6IiNmZmZmZmYiLCJ0aGVtZV9jb2xvciI6IiNCODg2MEIiLCJpY29ucyI6W3sic3JjIjoiZGF0YTppbWFnZS9zdmcreG1sO2Jhc2U2NCxQSE4yWnlCM2FXUjBhRDBpTVRJNElpQm9aV2xuYUhROUlqRXlPQ0lpSUhacFpYZENiM2c5SWpBZ01DQXhNamdnTVRJNElpQm1hV3hzUFNJaVFqZzROakJDSWo0OGNtVmpkQ0IzYVdSMGFEMGlNVEk0SWlCb1pXbG5hSFE5SWpFeU9DSWlJSEo0UFNJeE1pSWdabWxzYkQwaWQyaHBkR1VpTHo0OEwzTjJaejQ9Iiwic2l6ZXMiOiIxMjh4MTI4IiwidHlwZSI6ImltYWdlL3N2Zyt4bWwifV19">
+    
+    <!-- PWA Manifest and Icons -->
+    <link rel="manifest" href="#" id="manifest-placeholder">
+    <meta name="theme-color" content="#B8860B">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="apple-mobile-web-app-title" content="Riserig">
+    <link rel="apple-touch-icon" href="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTkyIiBoZWlnaHQ9IjE5MiIgdmlld0JveD0iMCAwIDE5MiAxOTIiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIxOTIiIGhlaWdodD0iMTkyIiByeD0iMjQiIGZpbGw9IiNCODg2MEIiLz4KPHN2ZyB4PSI0OCIgeT0iNDgiIHdpZHRoPSI5NiIgaGVpZ2h0PSI5NiIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJ3aGl0ZSI+CjxwYXRoIGQ9Ik0xMiAyQzYuNDggMiAyIDYuNDggMiAxMnM0LjQ4IDEwIDEwIDEwIDEwLTQuNDggMTAtMTBTMTcuNTIgMiAxMiAyem0tMiAxNWwtNS01aDNWOGg0djRoM2wtNSA1eiIvPgo8L3N2Zz4KPC9zdmc+">
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzIiIGhlaWdodD0iMzIiIHZpZXdCb3g9IjAgMCAzMiAzMiIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjMyIiBoZWlnaHQ9IjMyIiByeD0iNCIgZmlsbD0iI0I4ODYwQiIvPgo8c3ZnIHg9IjgiIHk9IjgiIHdpZHRoPSIxNiIgaGVpZ2h0PSIxNiIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJ3aGl0ZSI+CjxwYXRoIGQ9Ik0xMiAyQzYuNDggMiAyIDYuNDggMiAxMnM0LjQ4IDEwIDEwIDEwIDEwLTQuNDggMTAtMTBTMTcuNTIgMiAxMiAyem0tMiAxNWwtNS01aDNWOGg0djRoM2wtNSA1eiIvPgo8L3N2Zz4KPC9zdmc+">
+    
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
     <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
@@ -134,6 +143,21 @@
         .hover\:bg-gold-dark:hover {
             background-color: #996F0A;
         }
+        
+        /* PWA specific styles */
+        .pwa-mode .pwa-banner {
+            display: none !important;
+        }
+        
+        .install-pulse {
+            animation: installPulse 2s infinite;
+        }
+        
+        @keyframes installPulse {
+            0% { box-shadow: 0 0 0 0 rgba(184, 134, 11, 0.7); }
+            70% { box-shadow: 0 0 0 10px rgba(184, 134, 11, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(184, 134, 11, 0); }
+        }
     </style>
 </head>
 <body class="bg-gray-50">
@@ -142,7 +166,7 @@
         <div class="flex items-center justify-between max-w-4xl mx-auto px-4">
             <span>📱 Install Riserig App on your device for better experience!</span>
             <div>
-                <button id="install-btn" class="bg-white text-gold px-3 py-1 rounded text-sm mr-2 hover:bg-gray-100">Install</button>
+                <button id="install-btn" class="bg-white text-gold px-3 py-1 rounded text-sm mr-2 hover:bg-gray-100 install-pulse">Install App</button>
                 <button id="close-banner" class="text-white">✕</button>
             </div>
         </div>
@@ -563,7 +587,7 @@
             </div>
 
             <!-- Sidebar -->
-            <div id="dashboard-sidebar" class="w-full lg:w-64 bg-white shadow-lg lg:block hidden lg:relative absolute top-0 left-0 right-0 z-20 lg:z-auto">
+            <div id="dashboard-sidebar" class="w-full lg:w-64 bg-white shadow-lg lg:block hidden lg:relative absolute top-0 left-0 right-0 z-30 lg:z-auto">
                 <div class="p-6 hidden lg:block">
                     <h2 class="text-xl font-bold text-gold">Riserig Dashboard</h2>
                 </div>
@@ -795,24 +819,410 @@
             window.scrollTo({ top: 0, behavior: 'smooth' });
         });
 
-        // PWA Installation
-        let deferredPrompt;
-        
-        window.addEventListener('beforeinstallprompt', (e) => {
-            e.preventDefault();
-            deferredPrompt = e;
-            pwaBanner.classList.add('show');
-        });
-
-        document.getElementById('install-btn').addEventListener('click', async () => {
-            if (deferredPrompt) {
-                deferredPrompt.prompt();
-                const { outcome } = await deferredPrompt.userChoice;
-                deferredPrompt = null;
-                pwaBanner.classList.remove('show');
+        // PWA Manifest Generation
+        function generateManifest() {
+            const manifest = {
+                name: "Riserig - Online Learning Platform",
+                short_name: "Riserig",
+                description: "Learn programming and digital skills with Riserig's comprehensive courses for kids and teens",
+                start_url: "https://www.riserig.site/",
+                display: "standalone",
+                background_color: "#ffffff",
+                theme_color: "#B8860B",
+                orientation: "portrait-primary",
+                scope: "https://www.riserig.site/",
+                categories: ["education", "productivity"],
+                lang: "en",
+                dir: "ltr",
+                icons: [
+                    {
+                        src: "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNzIiIGhlaWdodD0iNzIiIHZpZXdCb3g9IjAgMCA3MiA3MiIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjcyIiBoZWlnaHQ9IjcyIiByeD0iMTIiIGZpbGw9IiNCODg2MEIiLz4KPHN2ZyB4PSIxOCIgeT0iMTgiIHdpZHRoPSIzNiIgaGVpZ2h0PSIzNiIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJ3aGl0ZSI+CjxwYXRoIGQ9Ik0xMiAyQzYuNDggMiAyIDYuNDggMiAxMnM0LjQ4IDEwIDEwIDEwIDEwLTQuNDggMTAtMTBTMTcuNTIgMiAxMiAyem0tMiAxNWwtNS01aDNWOGg0djRoM2wtNSA1eiIvPgo8L3N2Zz4KPC9zdmc+",
+                        sizes: "72x72",
+                        type: "image/svg+xml",
+                        purpose: "any"
+                    },
+                    {
+                        src: "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iOTYiIGhlaWdodD0iOTYiIHZpZXdCb3g9IjAgMCA5NiA5NiIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9Ijk2IiBoZWlnaHQ9Ijk2IiByeD0iMTYiIGZpbGw9IiNCODg2MEIiLz4KPHN2ZyB4PSIyNCIgeT0iMjQiIHdpZHRoPSI0OCIgaGVpZ2h0PSI0OCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJ3aGl0ZSI+CjxwYXRoIGQ9Ik0xMiAyQzYuNDggMiAyIDYuNDggMiAxMnM0LjQ4IDEwIDEwIDEwIDEwLTQuNDggMTAtMTBTMTcuNTIgMiAxMiAyem0tMiAxNWwtNS01aDNWOGg0djRoM2wtNSA1eiIvPgo8L3N2Zz4KPC9zdmc+",
+                        sizes: "96x96",
+                        type: "image/svg+xml",
+                        purpose: "any"
+                    },
+                    {
+                        src: "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTI4IiBoZWlnaHQ9IjEyOCIgdmlld0JveD0iMCAwIDEyOCAxMjgiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIxMjgiIGhlaWdodD0iMTI4IiByeD0iMjAiIGZpbGw9IiNCODg2MEIiLz4KPHN2ZyB4PSIzMiIgeT0iMzIiIHdpZHRoPSI2NCIgaGVpZ2h0PSI2NCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJ3aGl0ZSI+CjxwYXRoIGQ9Ik0xMiAyQzYuNDggMiAyIDYuNDggMiAxMnM0LjQ4IDEwIDEwIDEwIDEwLTQuNDggMTAtMTBTMTcuNTIgMiAxMiAyem0tMiAxNWwtNS01aDNWOGg0djRoM2wtNSA1eiIvPgo8L3N2Zz4KPC9zdmc+",
+                        sizes: "128x128",
+                        type: "image/svg+xml",
+                        purpose: "any"
+                    },
+                    {
+                        src: "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTkyIiBoZWlnaHQ9IjE5MiIgdmlld0JveD0iMCAwIDE5MiAxOTIiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIxOTIiIGhlaWdodD0iMTkyIiByeD0iMjQiIGZpbGw9IiNCODg2MEIiLz4KPHN2ZyB4PSI0OCIgeT0iNDgiIHdpZHRoPSI5NiIgaGVpZ2h0PSI5NiIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJ3aGl0ZSI+CjxwYXRoIGQ9Ik0xMiAyQzYuNDggMiAyIDYuNDggMiAxMnM0LjQ4IDEwIDEwIDEwIDEwLTQuNDggMTAtMTBTMTcuNTIgMiAxMiAyem0tMiAxNWwtNS01aDNWOGg0djRoM2wtNSA1eiIvPgo8L3N2Zz4KPC9zdmc+",
+                        sizes: "192x192",
+                        type: "image/svg+xml",
+                        purpose: "any"
+                    },
+                    {
+                        src: "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNTEyIiBoZWlnaHQ9IjUxMiIgdmlld0JveD0iMCAwIDUxMiA1MTIiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSI1MTIiIGhlaWdodD0iNTEyIiByeD0iNjQiIGZpbGw9IiNCODg2MEIiLz4KPHN2ZyB4PSIxMjgiIHk9IjEyOCIgd2lkdGg9IjI1NiIgaGVpZ2h0PSIyNTYiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0id2hpdGUiPgo8cGF0aCBkPSJNMTIgMkM2LjQ4IDIgMiA2LjQ4IDIgMTJzNC40OCAxMCAxMCAxMCAxMC00LjQ4IDEwLTEwUzE3LjUyIDIgMTIgMnptLTIgMTVsLTUtNWgzVjhoNHY0aDNsLTUgNXoiLz4KPC9zdmc+CjwvZz4KPC9zdmc+",
+                        sizes: "512x512",
+                        type: "image/svg+xml",
+                        purpose: "any maskable"
+                    }
+                ],
+                shortcuts: [
+                    {
+                        name: "View Courses",
+                        short_name: "Courses",
+                        description: "Browse available courses",
+                        url: "https://www.riserig.site/#courses",
+                        icons: [{ src: "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iOTYiIGhlaWdodD0iOTYiIHZpZXdCb3g9IjAgMCA5NiA5NiIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9Ijk2IiBoZWlnaHQ9Ijk2IiByeD0iMTYiIGZpbGw9IiNCODg2MEIiLz4KPHN2ZyB4PSIyNCIgeT0iMjQiIHdpZHRoPSI0OCIgaGVpZ2h0PSI0OCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJ3aGl0ZSI+CjxwYXRoIGQ9Ik0xOSAzSDVjLTEuMSAwLTIgLjktMiAydjE0YzAgMS4xLjkgMiAyIDJoMTRjMS4xIDAgMi0uOSAyLTJWNWMwLTEuMS0uOS0yLTItMnptLTUgMTRIN3YtMmg3djJ6bTMtNEg3di0yaDEwdjJ6bTAtNEg3VjdoMTB2MnoiLz4KPC9zdmc+CjwvZz4KPC9zdmc+", sizes: "96x96" }]
+                    },
+                    {
+                        name: "Contact Us",
+                        short_name: "Contact",
+                        description: "Get in touch with us",
+                        url: "https://www.riserig.site/#contact",
+                        icons: [{ src: "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iOTYiIGhlaWdodD0iOTYiIHZpZXdCb3g9IjAgMCA5NiA5NiIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9Ijk2IiBoZWlnaHQ9Ijk2IiByeD0iMTYiIGZpbGw9IiNCODg2MEIiLz4KPHN2ZyB4PSIyNCIgeT0iMjQiIHdpZHRoPSI0OCIgaGVpZ2h0PSI0OCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJ3aGl0ZSI+CjxwYXRoIGQ9Ik0yMCA0SDRjLTEuMSAwLTEuOTkuOS0xLjk5IDJMMiAxOGMwIDEuMS45IDIgMiAyaDE2YzEuMSAwIDItLjkgMi0yVjZjMC0xLjEtLjktMi0yLTJ6bTAgNGwtOCA1LTgtNVY2bDggNSA4LTVWOHoiLz4KPC9zdmc+CjwvZz4KPC9zdmc+", sizes: "96x96" }]
+                    }
+                ]
+            };
+            
+            const manifestBlob = new Blob([JSON.stringify(manifest)], { type: 'application/json' });
+            const manifestURL = URL.createObjectURL(manifestBlob);
+            
+            const manifestLink = document.getElementById('manifest-placeholder');
+            if (manifestLink) {
+                manifestLink.href = manifestURL;
             }
-        });
+        }
 
+        // Service Worker Registration with Enhanced Caching
+        function registerServiceWorker() {
+            if ('serviceWorker' in navigator) {
+                const swCode = `
+                    const CACHE_NAME = 'riserig-v2.0';
+                    const STATIC_CACHE = 'riserig-static-v2.0';
+                    const DYNAMIC_CACHE = 'riserig-dynamic-v2.0';
+                    
+                    const STATIC_FILES = [
+                        '/',
+                        'https://cdn.tailwindcss.com',
+                        'https://unpkg.com/aos@2.3.1/dist/aos.js',
+                        'https://unpkg.com/aos@2.3.1/dist/aos.css',
+                        'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css'
+                    ];
+                    
+                    // Install event
+                    self.addEventListener('install', (event) => {
+                        console.log('Service Worker installing...');
+                        event.waitUntil(
+                            caches.open(STATIC_CACHE)
+                                .then((cache) => {
+                                    console.log('Caching static files');
+                                    return cache.addAll(STATIC_FILES);
+                                })
+                                .then(() => self.skipWaiting())
+                        );
+                    });
+                    
+                    // Activate event
+                    self.addEventListener('activate', (event) => {
+                        console.log('Service Worker activating...');
+                        event.waitUntil(
+                            caches.keys().then((cacheNames) => {
+                                return Promise.all(
+                                    cacheNames.map((cacheName) => {
+                                        if (cacheName !== STATIC_CACHE && cacheName !== DYNAMIC_CACHE) {
+                                            console.log('Deleting old cache:', cacheName);
+                                            return caches.delete(cacheName);
+                                        }
+                                    })
+                                );
+                            }).then(() => self.clients.claim())
+                        );
+                    });
+                    
+                    // Fetch event with network-first strategy for dynamic content
+                    self.addEventListener('fetch', (event) => {
+                        const { request } = event;
+                        const url = new URL(request.url);
+                        
+                        // Skip non-GET requests
+                        if (request.method !== 'GET') return;
+                        
+                        // Handle Firebase and external API requests
+                        if (url.origin.includes('firebase') || url.origin.includes('gstatic')) {
+                            event.respondWith(
+                                fetch(request)
+                                    .then(response => {
+                                        if (response.ok) {
+                                            const responseClone = response.clone();
+                                            caches.open(DYNAMIC_CACHE)
+                                                .then(cache => cache.put(request, responseClone));
+                                        }
+                                        return response;
+                                    })
+                                    .catch(() => caches.match(request))
+                            );
+                            return;
+                        }
+                        
+                        // Handle static assets with cache-first strategy
+                        if (request.destination === 'style' || request.destination === 'script' || 
+                            request.destination === 'font' || request.destination === 'image') {
+                            event.respondWith(
+                                caches.match(request)
+                                    .then(response => {
+                                        if (response) return response;
+                                        return fetch(request)
+                                            .then(fetchResponse => {
+                                                if (fetchResponse.ok) {
+                                                    const responseClone = fetchResponse.clone();
+                                                    caches.open(STATIC_CACHE)
+                                                        .then(cache => cache.put(request, responseClone));
+                                                }
+                                                return fetchResponse;
+                                            });
+                                    })
+                            );
+                            return;
+                        }
+                        
+                        // Handle page requests with network-first, fallback to cache
+                        event.respondWith(
+                            fetch(request)
+                                .then(response => {
+                                    if (response.ok) {
+                                        const responseClone = response.clone();
+                                        caches.open(DYNAMIC_CACHE)
+                                            .then(cache => cache.put(request, responseClone));
+                                    }
+                                    return response;
+                                })
+                                .catch(() => {
+                                    return caches.match(request)
+                                        .then(response => {
+                                            if (response) return response;
+                                            // Return offline page if available
+                                            if (request.destination === 'document') {
+                                                return caches.match('/');
+                                            }
+                                        });
+                                })
+                        );
+                    });
+                    
+                    // Background sync for offline form submissions
+                    self.addEventListener('sync', (event) => {
+                        if (event.tag === 'contact-form') {
+                            event.waitUntil(
+                                // Handle offline form submissions when back online
+                                console.log('Background sync: contact-form')
+                            );
+                        }
+                    });
+                    
+                    // Push notification handling
+                    self.addEventListener('push', (event) => {
+                        const options = {
+                            body: event.data ? event.data.text() : 'New update from Riserig!',
+                            icon: 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTkyIiBoZWlnaHQ9IjE5MiIgdmlld0JveD0iMCAwIDE5MiAxOTIiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIxOTIiIGhlaWdodD0iMTkyIiByeD0iMjQiIGZpbGw9IiNCODg2MEIiLz4KPHN2ZyB4PSI0OCIgeT0iNDgiIHdpZHRoPSI5NiIgaGVpZ2h0PSI5NiIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJ3aGl0ZSI+CjxwYXRoIGQ9Ik0xMiAyQzYuNDggMiAyIDYuNDggMiAxMnM0LjQ4IDEwIDEwIDEwIDEwLTQuNDggMTAtMTBTMTcuNTIgMiAxMiAyem0tMiAxNWwtNS01aDNWOGg0djRoM2wtNSA1eiIvPgo8L3N2Zz4KPC9zdmc+',
+                            badge: 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNzIiIGhlaWdodD0iNzIiIHZpZXdCb3g9IjAgMCA3MiA3MiIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjcyIiBoZWlnaHQ9IjcyIiByeD0iMTIiIGZpbGw9IiNCODg2MEIiLz4KPHN2ZyB4PSIxOCIgeT0iMTgiIHdpZHRoPSIzNiIgaGVpZ2h0PSIzNiIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJ3aGl0ZSI+CjxwYXRoIGQ9Ik0xMiAyQzYuNDggMiAyIDYuNDggMiAxMnM0LjQ4IDEwIDEwIDEwIDEwLTQuNDggMTAtMTBTMTcuNTIgMiAxMiAyem0tMiAxNWwtNS01aDNWOGg0djRoM2wtNSA1eiIvPgo8L3N2Zz4KPC9zdmc+',
+                            vibrate: [200, 100, 200],
+                            tag: 'riserig-notification',
+                            actions: [
+                                {
+                                    action: 'open',
+                                    title: 'Open App'
+                                },
+                                {
+                                    action: 'close',
+                                    title: 'Close'
+                                }
+                            ]
+                        };
+                        
+                        event.waitUntil(
+                            self.registration.showNotification('Riserig', options)
+                        );
+                    });
+                    
+                    // Notification click handling
+                    self.addEventListener('notificationclick', (event) => {
+                        event.notification.close();
+                        
+                        if (event.action === 'open' || !event.action) {
+                            event.waitUntil(
+                                clients.openWindow('https://www.riserig.site/')
+                            );
+                        }
+                    });
+                `;
+                
+                const blob = new Blob([swCode], { type: 'application/javascript' });
+                const swUrl = URL.createObjectURL(blob);
+                
+                navigator.serviceWorker.register(swUrl)
+                    .then((registration) => {
+                        console.log('✅ Service Worker registered successfully:', registration.scope);
+                        
+                        // Check for updates
+                        registration.addEventListener('updatefound', () => {
+                            console.log('🔄 New service worker version found');
+                        });
+                    })
+                    .catch((error) => {
+                        console.error('❌ Service Worker registration failed:', error);
+                    });
+            }
+        }
+
+        // Enhanced PWA Installation Detection and Handling
+        function initializePWA() {
+            // Generate and set manifest
+            generateManifest();
+            
+            // Register service worker
+            registerServiceWorker();
+            
+            // Enhanced install prompt handling
+            let installPromptEvent = null;
+            
+            window.addEventListener('beforeinstallprompt', (e) => {
+                console.log('💡 PWA install prompt available');
+                e.preventDefault();
+                installPromptEvent = e;
+                
+                // Show custom install banner
+                const banner = document.getElementById('pwa-banner');
+                if (banner) {
+                    banner.classList.add('show');
+                }
+                
+                // Update install button text based on platform
+                const installBtn = document.getElementById('install-btn');
+                if (installBtn) {
+                    const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
+                    const isAndroid = /Android/.test(navigator.userAgent);
+                    
+                    if (isIOS) {
+                        installBtn.textContent = 'Add to Home Screen';
+                    } else if (isAndroid) {
+                        installBtn.textContent = 'Install App';
+                    } else {
+                        installBtn.textContent = 'Install';
+                    }
+                }
+            });
+            
+            // Handle install button click
+            document.getElementById('install-btn').addEventListener('click', async () => {
+                if (installPromptEvent) {
+                    console.log('🚀 Triggering PWA install prompt');
+                    installPromptEvent.prompt();
+                    
+                    const { outcome } = await installPromptEvent.userChoice;
+                    console.log('📱 Install prompt result:', outcome);
+                    
+                    if (outcome === 'accepted') {
+                        console.log('✅ User accepted the install prompt');
+                        showInstallSuccess();
+                    } else {
+                        console.log('❌ User dismissed the install prompt');
+                    }
+                    
+                    installPromptEvent = null;
+                    document.getElementById('pwa-banner').classList.remove('show');
+                } else {
+                    // Fallback for browsers that don't support install prompt
+                    showManualInstallInstructions();
+                }
+            });
+            
+            // Detect if app is already installed
+            window.addEventListener('appinstalled', (e) => {
+                console.log('🎉 PWA was installed successfully');
+                document.getElementById('pwa-banner').classList.remove('show');
+                showInstallSuccess();
+            });
+            
+            // Check if running as PWA
+            if (window.matchMedia('(display-mode: standalone)').matches || 
+                window.navigator.standalone === true) {
+                console.log('📱 Running as installed PWA');
+                document.body.classList.add('pwa-mode');
+                
+                // Hide install banner if running as PWA
+                const banner = document.getElementById('pwa-banner');
+                if (banner) {
+                    banner.style.display = 'none';
+                }
+            }
+        }
+        
+        function showInstallSuccess() {
+            const successDiv = document.createElement('div');
+            successDiv.className = 'fixed top-20 left-1/2 transform -translate-x-1/2 bg-green-500 text-white px-6 py-3 rounded-lg shadow-lg z-50';
+            successDiv.innerHTML = `
+                <div class="flex items-center">
+                    <i class="fas fa-check-circle mr-2"></i>
+                    <span>🎉 Riserig app installed successfully!</span>
+                </div>
+            `;
+            document.body.appendChild(successDiv);
+            
+            setTimeout(() => {
+                successDiv.remove();
+            }, 4000);
+        }
+        
+        function showManualInstallInstructions() {
+            const instructionsDiv = document.createElement('div');
+            instructionsDiv.className = 'fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4';
+            
+            const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
+            const isAndroid = /Android/.test(navigator.userAgent);
+            
+            let instructions = '';
+            if (isIOS) {
+                instructions = `
+                    <h3 class="text-lg font-bold mb-4">Install Riserig on iOS</h3>
+                    <ol class="list-decimal list-inside space-y-2 text-sm">
+                        <li>Tap the Share button <i class="fas fa-share"></i> in Safari</li>
+                        <li>Scroll down and tap "Add to Home Screen"</li>
+                        <li>Tap "Add" to install the app</li>
+                    </ol>
+                `;
+            } else if (isAndroid) {
+                instructions = `
+                    <h3 class="text-lg font-bold mb-4">Install Riserig on Android</h3>
+                    <ol class="list-decimal list-inside space-y-2 text-sm">
+                        <li>Tap the menu button (⋮) in Chrome</li>
+                        <li>Select "Add to Home screen" or "Install app"</li>
+                        <li>Tap "Add" or "Install" to confirm</li>
+                    </ol>
+                `;
+            } else {
+                instructions = `
+                    <h3 class="text-lg font-bold mb-4">Install Riserig</h3>
+                    <ol class="list-decimal list-inside space-y-2 text-sm">
+                        <li>Look for the install icon in your browser's address bar</li>
+                        <li>Click it and select "Install"</li>
+                        <li>Or use your browser's menu to find "Install app" option</li>
+                    </ol>
+                `;
+            }
+            
+            instructionsDiv.innerHTML = `
+                <div class="bg-white rounded-lg p-6 max-w-md w-full">
+                    ${instructions}
+                    <button onclick="this.parentElement.parentElement.remove()" class="w-full mt-4 gold-gradient text-white py-2 rounded-lg">
+                        Got it!
+                    </button>
+                </div>
+            `;
+            
+            document.body.appendChild(instructionsDiv);
+        }
+
+        // PWA Installation
         document.getElementById('close-banner').addEventListener('click', () => {
             pwaBanner.classList.remove('show');
         });
@@ -1297,39 +1707,11 @@
             if (e.target === paymentModal) hidePaymentModal();
         });
 
-        // Service Worker Registration
-        if ('serviceWorker' in navigator) {
-            window.addEventListener('load', () => {
-                const swCode = `
-                    const CACHE_NAME = 'riserig-v1';
-                    const urlsToCache = ['/'];
-                    
-                    self.addEventListener('install', (event) => {
-                        event.waitUntil(
-                            caches.open(CACHE_NAME)
-                                .then((cache) => cache.addAll(urlsToCache))
-                        );
-                    });
-                    
-                    self.addEventListener('fetch', (event) => {
-                        event.respondWith(
-                            caches.match(event.request)
-                                .then((response) => response || fetch(event.request))
-                        );
-                    });
-                `;
-                
-                const blob = new Blob([swCode], { type: 'application/javascript' });
-                const swUrl = URL.createObjectURL(blob);
-                
-                navigator.serviceWorker.register(swUrl)
-                    .then(() => console.log('SW registered'))
-                    .catch(() => console.log('SW registration failed'));
-            });
-        }
-
-        // Initialize
-        updateAuthButton();
+        // Initialize PWA and App
+        document.addEventListener('DOMContentLoaded', () => {
+            initializePWA();
+            updateAuthButton();
+        });
     </script>
-<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9913d765a0e48a67',t:'MTc2MDkxNDMwMC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9913e9e8d6bb8a67',t:'MTc2MDkxNTA1OC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
