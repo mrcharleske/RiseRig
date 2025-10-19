@@ -844,9 +844,17 @@
 
         // Dashboard Functions
         function showDashboard() {
-            mainContent.classList.add('hidden');
-            dashboard.classList.remove('hidden');
-            showDashboardSection('profile');
+            console.log('Showing dashboard...');
+            console.log('Main content element:', mainContent);
+            console.log('Dashboard element:', dashboard);
+            
+            if (mainContent) mainContent.classList.add('hidden');
+            if (dashboard) dashboard.classList.remove('hidden');
+            
+            // Ensure profile section is shown
+            setTimeout(() => {
+                showDashboardSection('profile');
+            }, 100);
         }
 
         function showMainContent() {
@@ -855,15 +863,29 @@
         }
 
         function showDashboardSection(section) {
+            console.log('Showing dashboard section:', section);
+            
+            // Hide all sections
             document.querySelectorAll('.dashboard-section').forEach(el => {
                 el.classList.add('hidden');
             });
-            document.getElementById(`dashboard-${section}`).classList.remove('hidden');
+            
+            // Show selected section
+            const targetSection = document.getElementById(`dashboard-${section}`);
+            if (targetSection) {
+                targetSection.classList.remove('hidden');
+            }
             
             // Update nav active state
             document.querySelectorAll('.dashboard-nav-item').forEach(el => {
                 el.classList.remove('bg-yellow-50', 'text-gold');
             });
+            
+            // Add active state to current nav item
+            const activeNavItem = document.querySelector(`[onclick="showDashboardSection('${section}')"]`);
+            if (activeNavItem) {
+                activeNavItem.classList.add('bg-yellow-50', 'text-gold');
+            }
         }
 
         function logout() {
@@ -954,6 +976,17 @@
                     
                     // Success will be handled by onAuthStateChanged
                     showSuccessMessage(isLoginMode ? 'Login successful!' : 'Account created successfully!');
+                    
+                    // Manually trigger dashboard after success message
+                    setTimeout(() => {
+                        if (currentUser || userCredential.user) {
+                            currentUser = userCredential.user;
+                            document.getElementById('user-email').textContent = userCredential.user.email;
+                            updateAuthButton();
+                            hideAuthModal();
+                            showDashboard();
+                        }
+                    }, 2000);
                     
                 } else {
                     console.log('Firebase not available, using demo mode');
@@ -1078,12 +1111,17 @@
         // Firebase Auth State Observer
         if (window.onAuthStateChanged && window.firebaseAuth) {
             window.onAuthStateChanged(window.firebaseAuth, (user) => {
+                console.log('Auth state changed:', user);
                 if (user) {
                     currentUser = user;
                     document.getElementById('user-email').textContent = user.email;
                     updateAuthButton();
                     hideAuthModal();
-                    showDashboard();
+                    
+                    // Show success message and then dashboard
+                    setTimeout(() => {
+                        showDashboard();
+                    }, 1000);
                 } else {
                     currentUser = null;
                     updateAuthButton();
@@ -1135,5 +1173,5 @@
         // Initialize
         updateAuthButton();
     </script>
-<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'991398b7128a8a67',t:'MTc2MDkxMTczMi4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9913a42ff4dc8a67',t:'MTc2MDkxMjIwMi4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
